@@ -1,6 +1,6 @@
 class CreateQuestions < ActiveRecord::Migration[7.1]
   def change
-    create_table :questions do |t|
+    create_table :questions, charset: "utf8mb4" do |t|
       t.integer :category_id, null:false
       t.string :text, null:false
       t.string :life_stage, null:false

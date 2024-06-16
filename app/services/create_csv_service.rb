@@ -12,8 +12,6 @@ class CreateCsvService
       CSV.foreach(@csv_file, headers: true, encoding: 'utf-8') do |row|
         row_num += 1
         records = row.to_h
-        records[:created_at] ||= Time.now
-        records[:updated_at] ||= Time.now
         puts records
         @model.create!(records)
       end
