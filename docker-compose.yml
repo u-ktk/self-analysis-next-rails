@@ -1,0 +1,50 @@
+version: "3"
+services:
+  db:
+    image: mysql:5.7
+    platform: linux/amd64
+    container_name: selfanalysis.mysql.local
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      selfanalysis.local: {}
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+
+  web:
+    build: .
+    container_name: selfanalysis.rails.local
+    command:
+      [
+        "/bin/sh",
+        "-c",
+        "rm -f tmp/pids/server.pid && bundle exec rails s -b '0.0.0.0'",
+      ]
+    volumes:
+      - .:/rails-api
+    networks:
+      selfanalysis.local: {}
+    ports:
+      - "3010:3000"
+    environment:
+      DATABASE_HOST: db
+      DATABASE_NAME: self_analysis_development
+      DATABASE_USER: ${DB_USERNAME}
+      DATABASE_PASSWORD: ${DB_PASSWORD}
+    depends_on:
+      - db
+    tty: true
+    stdin_open: true
+
+volumes:
+  db_data:
+
+networks:
+  selfanalysis.local:
+    name: selfanalysis.local
+    external: true 
